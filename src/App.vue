@@ -1,47 +1,64 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script>
+import SearchForm from './components/SearchForm.vue'
+import BooksTable from './components/BooksTable.vue'
+
+  export default{
+    name: 'App',
+    data(){
+      return {
+        bookList: [],
+        bookListCurrent: [],
+        isSorted: false
+      }
+    },
+    components: {
+      SearchForm,
+      BooksTable
+    },
+    methods: {
+      async fetchData(){
+        const res = await fetch('/book_list.json');
+
+        const data = await res.json();
+
+        //Object.freeze(data);
+        return data;
+      },
+      searchId(id){
+        this.bookListCurrent = this.bookList.filter(book => book.bookId === id);
+      },
+      searchPrice(price){
+        this.bookListCurrent = this.bookList.filter(book => book.price === price);
+      },
+      searchGenre(genre){
+        genre = genre.toLowerCase();
+        this.bookListCurrent = this.bookList.filter(book => book.genre.toLowerCase() === genre);
+      },
+      sortByPrice(){
+        if(this.isSorted === false){
+          this.bookListCurrent = this.bookListCurrent.sort((b1, b2) => b1.price - b2.price);
+          this.isSorted = true;
+        }
+        else {
+          this.bookListCurrent.reverse();
+        }
+      }
+    },
+
+    async created(){
+      this.bookList = await this.fetchData();
+      this.bookListCurrent = this.bookList;
+    }
+  }
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
   <main>
-    <TheWelcome />
+    <SearchForm @searchId-task="searchId" @searchPrice-task="searchPrice" @searchGenre-task="searchGenre" />
+    <BooksTable :bookList="bookListCurrent" @sortByPrice-task="sortByPrice" />
   </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>

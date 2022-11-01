@@ -27,41 +27,41 @@
 </template>
 
 <script>
+    import { ref } from 'vue';
     export default{
         name: 'SearchForm',
-        data(){
-            return {
-                inputId: '',
-                inputPrice: '',
-                inputGenre: ''
+        setup(props, {emit}){
+            let inputId = ref('');
+            let inputPrice = ref('');
+            let inputGenre = ref('');
+
+            function searchByPrice(e){
+                e.preventDefault();
+                if(inputPrice.value.length <= 0)return;
+
+                const price = parseInt(inputPrice.value);
+
+                emit('searchPrice-task', price);
             }
+
+            function searchById(e){
+                e.preventDefault();
+                if(inputId.value.length <= 0)return;
+
+                const id = parseInt(inputId.value);
+
+                emit('searchId-task', id);
+            }
+
+            function searchByGenre(e){
+                e.preventDefault();
+                if(inputGenre.value.length <= 0)return;
+
+                emit('searchGenre-task', inputGenre.value);
+            }
+
+            return {inputId, inputPrice, inputGenre, searchByGenre, searchById, searchByPrice};
         },
-        methods: {
-            searchByPrice(e){
-                e.preventDefault();
-                if(this.inputPricelength <= 0)return;
-
-                const price = parseInt(this.inputPrice);
-
-                this.$emit('searchPrice-task', price);
-            },
-
-            searchById(e){
-                e.preventDefault();
-                if(this.inputId.length <= 0)return;
-
-                const id = parseInt(this.inputId);
-
-                this.$emit('searchId-task', id);
-            },
-
-            searchByGenre(e){
-                e.preventDefault();
-                if(this.inputGenre.length <= 0)return;
-
-                this.$emit('searchGenre-task', this.inputGenre);
-            }
-        }
     }
 </script>
 

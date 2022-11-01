@@ -25,13 +25,16 @@
 <script>
     export default{
         name: 'BooksTable',
+        setup(props, {emit}){
+
+          function sortByPrice(){
+              emit('sortByPrice-task');
+          }
+
+          return {sortByPrice};
+        },
         props: {
             bookList: Array
-        },
-        methods: {
-            sortByPrice(){
-                this.$emit('sortByPrice-task');
-            }
         }
     }
 </script>

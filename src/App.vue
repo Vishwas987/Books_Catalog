@@ -1,15 +1,38 @@
 <script>
 import SearchForm from './components/SearchForm.vue'
 import BooksTable from './components/BooksTable.vue'
+import { ref } from 'vue';
 
   export default{
     name: 'App',
-    data(){
-      return {
-        bookList: [],
-        bookListCurrent: [],
-        isSorted: false
+    setup(){
+      const bookList = ref([]);
+      const bookListCurrent = ref([]);
+      let isSorted = false;
+
+      function searchId(id){
+        bookListCurrent.value = bookList.value.filter(book => book.bookId === id);
       }
+      function searchPrice(price){
+        bookListCurrent.value = bookList.value.filter(book => book.price === price);
+        isSorted = false;
+      }
+      function searchGenre(genre){
+        genre = genre.toLowerCase();
+        bookListCurrent.value = bookList.value.filter(book => book.genre.toLowerCase() === genre);
+        isSorted = false;
+      }
+      function sortByPrice(){
+        if(isSorted === false){
+          bookListCurrent.value = bookListCurrent.value.sort((b1, b2) => b1.price - b2.price);
+          isSorted = true;
+        }
+        else {
+          bookListCurrent.value.reverse();
+        }
+      }
+
+      return {bookList, bookListCurrent, isSorted, searchId, searchGenre, searchPrice, sortByPrice};
     },
     components: {
       SearchForm,
@@ -21,28 +44,8 @@ import BooksTable from './components/BooksTable.vue'
 
         const data = await res.json();
 
-        //Object.freeze(data);
         return data;
       },
-      searchId(id){
-        this.bookListCurrent = this.bookList.filter(book => book.bookId === id);
-      },
-      searchPrice(price){
-        this.bookListCurrent = this.bookList.filter(book => book.price === price);
-      },
-      searchGenre(genre){
-        genre = genre.toLowerCase();
-        this.bookListCurrent = this.bookList.filter(book => book.genre.toLowerCase() === genre);
-      },
-      sortByPrice(){
-        if(this.isSorted === false){
-          this.bookListCurrent = this.bookListCurrent.sort((b1, b2) => b1.price - b2.price);
-          this.isSorted = true;
-        }
-        else {
-          this.bookListCurrent.reverse();
-        }
-      }
     },
 
     async created(){

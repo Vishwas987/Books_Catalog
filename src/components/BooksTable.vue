@@ -11,7 +11,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr :key="book.bookId" v-for="book in bookList">
+        <tr class="table-raw" v-for="book in bookList" :key="book.bookId" @click="openDetails(book)">
             <td>{{book.bookId}}</td>
             <td>{{book.genre}}</td>
             <td>{{book.price}}</td>
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import router from '../router';
+
     export default{
         name: 'BooksTable',
         setup(props, {emit}){
@@ -30,8 +32,15 @@
           function sortByPrice(){
               emit('sortByPrice-task');
           }
+          function openDetails(book){
+            router.push({
+              name: 'Details',
+              params: {book_s: JSON.stringify(book)}
+            });
+            
+          }
 
-          return {sortByPrice};
+          return {sortByPrice, openDetails};
         },
         props: {
             bookList: Array
@@ -42,6 +51,9 @@
 <style scoped>
 .container{
     margin-bottom:20px; 
+}
+.table-raw:hover{
+  background-color: beige;
 }
 .sort-by { 
 	padding-right: 18px;
